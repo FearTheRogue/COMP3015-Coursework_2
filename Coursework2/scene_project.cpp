@@ -18,7 +18,7 @@ using glm::vec4;
 using glm::mat3;
 using glm::mat4;
 
-Scene_Project::Scene_Project() : angle(0.0f)
+Scene_Project::Scene_Project() : plane(10,10,1,1)
 {
     fountain = ObjMesh::load("media/fountain.obj", true);
 }
@@ -29,17 +29,100 @@ void Scene_Project::initScene()
 
     glEnable(GL_DEPTH_TEST);
 
-    glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+    //glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 
-    view = glm::lookAt(vec3(0.5f, 0.75f, 0.75f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
     projection = mat4(1.0f);
 
-    prog.setUniform("Light.Position", view * glm::vec4(1.0f, 1.2f, 1.0f, 1.0f));
+    angle = glm::half_pi<float>();
+
+    prog.setUniform("Light.Position", view * glm::vec4(0.0f, 2.0f, 0.0f, 1.0f));
     prog.setUniform("Light.L", vec3(0.8f, 0.8f, 0.8f));
-    prog.setUniform("Light.La", vec3(0.5f, 0.5f, 0.8f));
+    prog.setUniform("Light.La", vec3(0.1f, 0.2f, 0.3f));
 }
 
-void Scene_Project::setMatrices()
+void Scene_Project::initBuffers()
+{
+    // generate the buffers for initial velocity and birth time
+    glGenBuffers(1, &initVel); // initial velocity buffer
+    glGenBuffers(1, &startTime); // start time buffer
+
+    // allocate space for all buffers
+    int size = nParticles * sizeof(float);
+    glBindBuffer(GL_ARRAY_BUFFER, initVel);
+    glBufferData(GL_ARRAY_BUFFER, size * 3, 0, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, startTime);
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_STATIC_DRAW);
+
+    // fill the first velocity buffer with random velocities
+    mat3 emitterBasis = ParticleUtils::makeArbitraryBasis(emitterDir);
+    vec3 v(0.0f);
+    float velocity, theta, phi;
+    std::vector<GLfloat> data(nParticles * 3);
+
+    for (uint32_t i = 0; i < nParticles; i++)
+    {
+        // pick the direction of the velocity
+        theta = glm::mix(0.0f, glm::pi<float>() / 20.0f, randFloat());
+        phi = glm::mix(0.0f, glm::two_pi<float>(), randFloat());
+
+        v.x = sinf(theta) * cosf(phi);
+        v.y = cosf(theta);
+        v.z = sinf(theta) * sinf(phi);
+
+        // scale the set the magnitude of the velocity
+        velocity = glm::mix(1.25f, 1.5f, randFloat());
+        v = glm::normalize(emitterBasis * v) * velocity;
+
+        data[3 * i] = v.x;
+        data[3 * i + 1] = v.y;
+        data[3 * i + 2] = v.z;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, initVel);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, size * 3, data.data());
+
+    // fill the start time buffer
+    float rate = particleLifetime / nParticles;
+    for (int i = 0; i < nParticles; i++)
+    {
+        data[i] = rate * i;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, startTime);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, nParticles * sizeof(float), data.data());
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glGenVertexArrays(1, &particles);
+    glBindVertexArray(particles);
+    glBindBuffer(GL_ARRAY_BUFFER, initVel);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, startTime);
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribDivisor(0, 1);
+    glVertexAttribDivisor(1, 1);
+
+    glBindVertexArray(0);
+}
+
+float Scene_Project::randFloat()
+{
+    return rand.nextFloat();
+}
+
+void Scene_Project::setMatrices(GLSLProgram& p)
+{
+    // model view matrix
+    mat4 mv = view * model;
+    p.setUniform("MV", mv);
+    p.setUniform("Proj", projection);
+}
+
+void Scene_Project::setMatrices(GLSLProgram& p)
 {
     mat4 mv = view * model;
 
@@ -66,17 +149,8 @@ void Scene_Project::update(float t)
 {
     //update your angle here
 
-    float deltaT = t - tPrev;
-
-    if (tPrev == 0.0f)
-        deltaT = 0.0f;
-
-    tPrev = t;
-
-    angle += 0.25f * deltaT;
-
-    if (angle > glm::two_pi<float>())
-        angle -= glm::two_pi<float>();
+    //angle = std::fmod(angle + 0.001f, glm::half_pi<float>());
+    //angle = std::fmod(angle + t, glm::half_pi<float>());
 }
 
 void Scene_Project::render()
@@ -84,6 +158,12 @@ void Scene_Project::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //create the rotation matrix here and update the uniform in the shader 
+
+    view = glm::lookAt(vec3(0.5f * cos(angle), 0.75f, 3.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 2.0f, 0.0f));
+    projection = glm::perspective(glm::radians(70.0f), (float)width / height, 0.3f, 100.0f);
+
+    //setMatrices();
+    //plane.render();
 
     setMatrices();
     grid.render();

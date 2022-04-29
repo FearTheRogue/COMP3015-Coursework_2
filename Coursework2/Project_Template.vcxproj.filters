@@ -57,6 +57,9 @@
     <ClCompile Include="helper\trianglemesh.cpp">
       <Filter>helper</Filter>
     </ClCompile>
+    <ClCompile Include="helper\plane.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\basic_uniform.frag">
@@ -113,6 +116,15 @@
       <Filter>helper</Filter>
     </ClInclude>
     <ClInclude Include="helper\utils.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\plane.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\random.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\particleutils.h">
       <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,19 +7,34 @@
 #include "helper/glslprogram.h"
 #include "helper/grid.h"
 #include "helper/objmesh.h"
+#include "helper/plane.h"
+#include "helper/random.h"
+#include "helper/particleutils.h"
 
 class Scene_Project : public Scene
 {
 private:
 
-    GLSLProgram prog;
-    float angle;
+    GLSLProgram prog, flatProg;
+
+    Random rand;
+
+    GLuint initVel, startTime, particles, nParticles;
+
+    float angle, time, particleLifetime;
     float tPrev;
+
+    Plane plane;
 
     Grid grid;
     std::unique_ptr<ObjMesh> fountain;
 
-    void setMatrices();
+    glm::vec3 emitterPos, emitterDir;
+
+    void initBuffers();
+    float randFloat();
+
+    void setMatrices(GLSLProgram&);
     void compile();
 
 public:

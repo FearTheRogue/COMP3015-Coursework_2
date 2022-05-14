@@ -12,32 +12,41 @@ using std::endl;
 
 #include "helper/glutils.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "helper/texture.h"
+
+//#include "imgui.h";
+//#include "imgui_impl_glfw.h";
+//#include "imgui_impl_opengl3.h";
 
 using glm::vec3;
 using glm::vec4;
 using glm::mat3;
 using glm::mat4;
 
-Scene_Project::Scene_Project() : plane(10,10,1,1)
+Scene_Project::Scene_Project() : angle(0.0f), time(0), particleLifetime(10.5f), nParticles(1500), emitterPos(0, 0.8, 0), emitterDir(0, 1, 0)
 {
-    fountain = ObjMesh::load("media/fountain.obj", true);
+    fountain = ObjMesh::load("media/fountain.obj", false);
 }
 
 void Scene_Project::initScene()
 {
     compile();
 
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+    // enable alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // enable depth test
     glEnable(GL_DEPTH_TEST);
-
-    //glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-
-    projection = mat4(1.0f);
 
     angle = glm::half_pi<float>();
 
-    prog.setUniform("Light.Position", view * glm::vec4(0.0f, 2.0f, 0.0f, 1.0f));
-    prog.setUniform("Light.L", vec3(0.8f, 0.8f, 0.8f));
-    prog.setUniform("Light.La", vec3(0.1f, 0.2f, 0.3f));
+    initBuffers();
+
+    // the particle texture
+    glActiveTexture(GL_TEXTURE0);
+    Texture::loadTexture("media/texture/bluewater.png");
 }
 
 void Scene_Project::initBuffers()
@@ -79,7 +88,7 @@ void Scene_Project::initBuffers()
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, initVel);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, size * 3, data.data());
+    glBufferSubData(GL_ARRAY_BUFFER, 0, size * 3, data.data()); // glBufferSubData(GL_ARRAY_BUFFER, 0, size * 3, data.data());
 
     // fill the start time buffer
     float rate = particleLifetime / nParticles;
@@ -89,18 +98,18 @@ void Scene_Project::initBuffers()
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, startTime);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, nParticles * sizeof(float), data.data());
+    glBufferSubData(GL_ARRAY_BUFFER, 0, nParticles * sizeof(float), data.data()); // glBufferSubData(GL_ARRAY_BUFFER, 0, nParticles * sizeof(float), data.data());
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glGenVertexArrays(1, &particles);
+    glGenVertexArrays(1, &particles); // glGenVertexArrays(1, &particles);
     glBindVertexArray(particles);
     glBindBuffer(GL_ARRAY_BUFFER, initVel);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, startTime);
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0); // glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(1);
 
     glVertexAttribDivisor(0, 1);
@@ -118,26 +127,29 @@ void Scene_Project::setMatrices(GLSLProgram& p)
 {
     // model view matrix
     mat4 mv = view * model;
+
     p.setUniform("MV", mv);
     p.setUniform("Proj", projection);
-}
 
-void Scene_Project::setMatrices(GLSLProgram& p)
-{
-    mat4 mv = view * model;
-
-    prog.setUniform("ModelViewMatrix", mv);
-    prog.setUniform("NormalMatrix", mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
-    prog.setUniform("MVP", projection * mv);
+    p.setUniform("NormalMatrix", glm::mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
+    p.setUniform("MVP", projection * mv);
 }
 
 void Scene_Project::compile()
 {
     try {
-        prog.compileShader("shader/projectshader.vert");
-        prog.compileShader("shader/projectshader.frag");
+        prog.compileShader("shader/scene_lighting.vert");
+        prog.compileShader("shader/scene_lighting.frag");
         prog.link();
         prog.use();
+
+        particleProg.compileShader("shader/particle_shader.vert");
+        particleProg.compileShader("shader/particle_shader.frag");
+        particleProg.link();
+
+        flatProg.compileShader("shader/flat_vert.glsl");
+        flatProg.compileShader("shader/flat_frag.glsl");
+        flatProg.link();
     }
     catch (GLSLProgramException& e) {
         cerr << e.what() << endl;
@@ -149,24 +161,24 @@ void Scene_Project::update(float t)
 {
     //update your angle here
 
-    //angle = std::fmod(angle + 0.001f, glm::half_pi<float>());
-    //angle = std::fmod(angle + t, glm::half_pi<float>());
+    time = t;
+    //angle = std::fmod(angle + 0.01f, glm::two_pi<float>());
 }
 
 void Scene_Project::render()
 {
+    // we clear colour and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //create the rotation matrix here and update the uniform in the shader 
-
-    view = glm::lookAt(vec3(0.5f * cos(angle), 0.75f, 3.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 2.0f, 0.0f));
-    projection = glm::perspective(glm::radians(70.0f), (float)width / height, 0.3f, 100.0f);
-
-    //setMatrices();
-    //plane.render();
-
-    setMatrices();
-    grid.render();
+    view = glm::lookAt(vec3(3.0f * cos(angle), 1.5f, 3.0f * sin(angle)), vec3(0.0f, 1.5f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+    projection = glm::perspective(glm::radians(60.0f), (float)width / height, 0.3f, 100.0f);
+    
+    // Lighting the scene
+    // Render model first, so it's drawn at the bottom
+    prog.use();
+    prog.setUniform("Light.Position", view * glm::vec4(0.0f, 2.0f, 0.0f, 1.0f));
+    prog.setUniform("Light.L", vec3(0.8f, 0.8f, 0.8f));
+    prog.setUniform("Light.La", vec3(0.1f, 0.2f, 0.3f));
 
     prog.setUniform("Material.Kd", 0.4f, 0.4f, 0.4f);
     prog.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);
@@ -174,11 +186,34 @@ void Scene_Project::render()
     prog.setUniform("Material.Shininess", 180.0f);
 
     model = mat4(1.0f);
-    model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-    model = glm::scale(model, vec3(1.0f));
+    model = glm::translate(model, vec3(0.0f, 0.0f, 0.0f));
 
-    setMatrices();
+    setMatrices(prog);
     fountain->render();
+    
+    // Particle colour
+    model = mat4(1.0f);
+    flatProg.use();
+    flatProg.setUniform("Colour", vec4(0.4f, 0.4f, 0.4f, 1.0f));
+
+    setMatrices(flatProg);
+    grid.render();
+
+    // Particle properties
+    glDepthMask(GL_FALSE);
+    particleProg.use();
+    particleProg.setUniform("ParticleTex", 0);
+    particleProg.setUniform("ParticleLifetime", particleLifetime);
+    particleProg.setUniform("ParticleSize", 0.05f);
+    particleProg.setUniform("Gravity", vec3(0.0f, -0.3f, 0.0f));
+    particleProg.setUniform("EmitterPos", emitterPos);
+    setMatrices(particleProg);
+
+    particleProg.setUniform("Time", time);
+    glBindVertexArray(particles);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, nParticles);
+    glBindVertexArray(0);
+    glDepthMask(GL_TRUE);
 }
 
 void Scene_Project::resize(int w, int h)
@@ -189,5 +224,5 @@ void Scene_Project::resize(int w, int h)
     width = w;
     height = h;
 
-    projection = glm::perspective(glm::radians(70.0f), (float)w / h, 0.3f, 100.0f);
+    projection = glm::perspective(glm::radians(60.0f), (float)w / h, 0.3f, 100.0f);
 }

@@ -7,7 +7,6 @@
 #include "helper/glslprogram.h"
 #include "helper/grid.h"
 #include "helper/objmesh.h"
-#include "helper/plane.h"
 #include "helper/random.h"
 #include "helper/particleutils.h"
 
@@ -15,7 +14,8 @@ class Scene_Project : public Scene
 {
 private:
 
-    GLSLProgram prog, flatProg;
+    GLSLProgram prog;
+    GLSLProgram particleProg, flatProg;
 
     Random rand;
 
@@ -23,8 +23,6 @@ private:
 
     float angle, time, particleLifetime;
     float tPrev;
-
-    Plane plane;
 
     Grid grid;
     std::unique_ptr<ObjMesh> fountain;

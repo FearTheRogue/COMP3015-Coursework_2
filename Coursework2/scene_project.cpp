@@ -1,5 +1,13 @@
 #include "scene_project.h"
 
+#include "imgui.h";
+#include "imgui_impl_glfw.h";
+#include "imgui_impl_opengl3.h";
+#include <iomanip>
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include <algorithm>
+
 #include <cstdio>
 #include <cstdlib>
 
@@ -14,10 +22,6 @@ using std::endl;
 #include <glm/gtc/matrix_transform.hpp>
 #include "helper/texture.h"
 
-//#include "imgui.h";
-//#include "imgui_impl_glfw.h";
-//#include "imgui_impl_opengl3.h";
-
 using glm::vec3;
 using glm::vec4;
 using glm::mat3;
@@ -25,6 +29,10 @@ using glm::mat4;
 
 Scene_Project::Scene_Project() : angle(0.0f), time(0), particleLifetime(10.5f), nParticles(1500), emitterPos(0, 0.8, 0), emitterDir(0, 1, 0)
 {
+    beginParticles = false;
+    lightLVec = vec3(0.8f, 0.8f, 0.8f);
+    lightLaVec = vec3(0.1f, 0.2f, 0.3f);
+    lightPos = vec4(0.0f, 2.0f, 0.0f, 1.0f);
     fountain = ObjMesh::load("media/fountain.obj", false);
 }
 
@@ -161,8 +169,10 @@ void Scene_Project::update(float t)
 {
     //update your angle here
 
-    time = t;
-    //angle = std::fmod(angle + 0.01f, glm::two_pi<float>());
+    if(beginParticles)
+        time = t;
+
+    angle = std::fmod(angle + 0.01f, glm::two_pi<float>());
 }
 
 void Scene_Project::render()
@@ -170,15 +180,47 @@ void Scene_Project::render()
     // we clear colour and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // ImGui Initilisation
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Console");
+    ImGui::Text("Particle System");
+    ImGui::Checkbox("Begin Particles", &beginParticles);
+
+    ImGui::Text("Light Properties");
+
+    ImGui::Text("Light Position");
+    float pos[4] = { lightPos.x ,lightPos.y, lightPos.z , lightPos.a };
+    ImGui::SliderFloat4("Light Position", pos, -10.0, 10.0);
+    lightPos = vec4(pos[0], pos[1], pos[2], pos[3]);
+
+    ImGui::Text("Light L");
+    float lightL[3] = { lightLVec.x, lightLVec.y, lightLVec.z };
+    ImGui::SliderFloat3("Light L", lightL, 0.0, 1.0);
+    lightLVec = vec3(lightL[0], lightL[1], lightL[2]);
+
+    ImGui::Text("Light La");
+    float lightLa[3] = { lightLaVec.x, lightLaVec.y, lightLaVec.z };
+    ImGui::SliderFloat3("Light L", lightLa, 0.0, 1.0);
+    lightLaVec = vec3(lightLa[0], lightLa[1], lightLa[2]);
+
+    ImGui::End();
+
+    // Render and draw ImGui to the screen
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
     view = glm::lookAt(vec3(3.0f * cos(angle), 1.5f, 3.0f * sin(angle)), vec3(0.0f, 1.5f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
     projection = glm::perspective(glm::radians(60.0f), (float)width / height, 0.3f, 100.0f);
     
     // Lighting the scene
     // Render model first, so it's drawn at the bottom
     prog.use();
-    prog.setUniform("Light.Position", view * glm::vec4(0.0f, 2.0f, 0.0f, 1.0f));
-    prog.setUniform("Light.L", vec3(0.8f, 0.8f, 0.8f));
-    prog.setUniform("Light.La", vec3(0.1f, 0.2f, 0.3f));
+    prog.setUniform("Light.Position", view * lightPos); // glm::vec4(0.0f, 2.0f, 0.0f, 1.0f)
+    prog.setUniform("Light.L", lightLVec); // vec3(0.8f, 0.8f, 0.8f)
+    prog.setUniform("Light.La", lightLaVec); // vec3(0.1f, 0.2f, 0.3f)
 
     prog.setUniform("Material.Kd", 0.4f, 0.4f, 0.4f);
     prog.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);
@@ -194,7 +236,8 @@ void Scene_Project::render()
     // Particle colour
     model = mat4(1.0f);
     flatProg.use();
-    flatProg.setUniform("Colour", vec4(0.4f, 0.4f, 0.4f, 1.0f));
+    vec4 particleColour = vec4(0.4f, 0.4f, 0.4f, 1.0f);
+    flatProg.setUniform("Colour", particleColour);
 
     setMatrices(flatProg);
     grid.render();

@@ -24,6 +24,11 @@ private:
     float angle, time, particleLifetime;
     float tPrev;
 
+    bool beginParticles;
+    glm::vec3 lightLVec;
+    glm::vec3 lightLaVec;
+    glm::vec4 lightPos;
+
     Grid grid;
     std::unique_ptr<ObjMesh> fountain;
 

@@ -6,6 +6,12 @@
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
 
+#include "imgui.h";
+#include "imgui_impl_glfw.h";
+#include "imgui_impl_opengl3.h";
+#include <iomanip>
+#include "glm/glm.hpp"
+
 #include <map>
 #include <string>
 #include <fstream>
@@ -13,13 +19,11 @@
 
 class SceneRunner {
 private:
-    
+    GLFWwindow* window;
     int fbw, fbh;
 	bool debug;           // Set true to enable debug messages
 
 public:
-    GLFWwindow* window;
-
     SceneRunner(const std::string & windowTitle, int width = WIN_WIDTH, int height = WIN_HEIGHT, int samples = 0) : debug(true) {
         // Initialize GLFW
         if( !glfwInit() ) exit( EXIT_FAILURE );
@@ -61,6 +65,14 @@ public:
 
         // Initialization
         glClearColor(0.5f,0.5f,0.5f,1.0f);
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init("#version 400");
+        ImGui::StyleColorsDark();
+
 #ifndef __APPLE__
 		if (debug) {
 			glDebugMessageCallback(GLUtils::debugCallback, nullptr);
@@ -121,7 +133,7 @@ private:
     void mainLoop(GLFWwindow * window, Scene & scene) {
         while( ! glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE) ) {
             GLUtils::checkForOpenGLError(__FILE__,__LINE__);
-			
+
             scene.update(float(glfwGetTime()));
             scene.render();
             glfwSwapBuffers(window);

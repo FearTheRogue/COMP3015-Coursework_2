@@ -116,6 +116,24 @@
     <None Include="shader\scene_lighting.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shader\wireframe.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shader\wireframe.geom">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shader\wireframe.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shader\silhouette.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shader\silhouette.geom">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shader\silhouette.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\scene.h">

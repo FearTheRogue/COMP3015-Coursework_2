@@ -13,29 +13,45 @@
 class Scene_Project : public Scene
 {
 private:
-
     GLSLProgram prog;
     GLSLProgram particleProg, flatProg;
+    GLSLProgram wireProg, silProg;
 
     Random rand;
 
-    GLuint initVel, startTime, particles, nParticles;
+    glm::vec3 emitterPos, emitterDir;
 
+    // particle buffers
+    GLuint posBuf[2], velBuf[2], age[2];
+    // particle VAOs
+    GLuint particleArray[2];
+    // transform feedbacks
+    GLuint feedback[2];
+    GLuint drawBuf;
+
+    int nParticles;
     float angle, time, particleLifetime;
     float tPrev;
+    float deltaT;
 
     bool beginParticles;
+    bool toggleRotation;
     glm::vec3 lightLVec;
     glm::vec3 lightLaVec;
     glm::vec4 lightPos;
+    glm::vec3 accel;
+    float pSize;
+    //glm::vec4 pColour;
+
+    glm::mat4 viewport;
+
+    bool toggleWireframe;
+    bool toggleSilhouette;
 
     Grid grid;
     std::unique_ptr<ObjMesh> fountain;
 
-    glm::vec3 emitterPos, emitterDir;
-
     void initBuffers();
-    float randFloat();
 
     void setMatrices(GLSLProgram&);
     void compile();

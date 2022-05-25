@@ -175,6 +175,12 @@
     <None Include="shader\particle_shader.vert" />
     <None Include="shader\scene_lighting.frag" />
     <None Include="shader\scene_lighting.vert" />
+    <None Include="shader\silhouette.frag" />
+    <None Include="shader\silhouette.geom" />
+    <None Include="shader\silhouette.vert" />
+    <None Include="shader\wireframe.frag" />
+    <None Include="shader\wireframe.geom" />
+    <None Include="shader\wireframe.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\aabb.h" />

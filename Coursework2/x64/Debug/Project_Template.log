@@ -1,0 +1,5 @@
+﻿  scene_project.cpp
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\Coursework2\scene_project.cpp(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\Coursework2\scene_project.cpp(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\Coursework2\scene_project.cpp(5,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Project_Template.vcxproj -> C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\Coursework2\x64\Debug\DeveloperTool.exe

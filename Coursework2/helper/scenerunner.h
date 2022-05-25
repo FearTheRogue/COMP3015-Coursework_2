@@ -70,7 +70,7 @@ public:
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         ImGui_ImplGlfw_InitForOpenGL(window, true);
-        ImGui_ImplOpenGL3_Init("#version 400");
+        ImGui_ImplOpenGL3_Init("#version 460");
         ImGui::StyleColorsDark();
 
 #ifndef __APPLE__

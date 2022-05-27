@@ -49,7 +49,8 @@ private:
     bool toggleSilhouette;
 
     Grid grid;
-    std::unique_ptr<ObjMesh> fountain;
+    std::unique_ptr<ObjMesh> fountainAdjacency;
+    std::unique_ptr<ObjMesh> fountainNormal;
 
     void initBuffers();
 

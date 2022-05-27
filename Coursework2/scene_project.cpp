@@ -38,7 +38,8 @@ Scene_Project::Scene_Project() : angle(0.0f), drawBuf(1), time(0), particleLifet
     pSize = 0.05f;
     toggleWireframe = false;
     toggleSilhouette = false;
-    fountain = ObjMesh::loadWithAdjacency("media/fountain.obj", false);
+    fountainAdjacency = ObjMesh::loadWithAdjacency("media/fountain.obj", false);
+    fountainNormal = ObjMesh::load("media/fountain.obj", false);
 }
 
 void Scene_Project::initScene()
@@ -357,22 +358,28 @@ void Scene_Project::render()
     model = glm::translate(model, vec3(0.0f, 0.0f, 0.0f));
 
     if (toggleWireframe)
+    {
         setMatrices(wireProg);
+        fountainNormal->render();
+    }
     else if (toggleSilhouette)
+    {
         setMatrices(silProg);
+        fountainAdjacency->render();
+    }
     else
+    {
         setMatrices(prog);
+        fountainNormal->render();
+    }
 
-    fountain->render();
-
-    // Particle colour
-    model = mat4(1.0f);
+    // Render Grid
 
     flatProg.use();
-
     setMatrices(flatProg);
     grid.render();
 
+    // Particle System
     particleProg.use();
     particleProg.setUniform("Time", time);
     particleProg.setUniform("DeltaT", deltaT);

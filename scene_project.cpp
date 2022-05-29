@@ -33,6 +33,7 @@ Scene_Project::Scene_Project(GLFWwindow& window) : window(window), angle(0.0f), 
     toggleRotation = false;
     rotationSpeed = 0.01f;
     zoomFOV = 5.0f;
+    zoomSpeed = 0.05f;
 
     // Particles assignment
     beginParticles = false;
@@ -169,7 +170,7 @@ void Scene_Project::initBuffers(GLuint posB[], GLuint velB[], GLuint ageB[], GLu
     glGenBuffers(2, ageB); // age buffers
 
     // allocate space for all buffers
-    int size = nParticles * 3 * sizeof(GLfloat);
+    int size = numParticles * 3 * sizeof(GLfloat);
     glBindBuffer(GL_ARRAY_BUFFER, posB[0]);
     glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
     glBindBuffer(GL_ARRAY_BUFFER, posB[1]);
@@ -179,9 +180,9 @@ void Scene_Project::initBuffers(GLuint posB[], GLuint velB[], GLuint ageB[], GLu
     glBindBuffer(GL_ARRAY_BUFFER, velB[1]);
     glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
     glBindBuffer(GL_ARRAY_BUFFER, ageB[0]);
-    glBufferData(GL_ARRAY_BUFFER, nParticles * sizeof(float), 0, GL_DYNAMIC_COPY);
+    glBufferData(GL_ARRAY_BUFFER, numParticles * sizeof(float), 0, GL_DYNAMIC_COPY);
     glBindBuffer(GL_ARRAY_BUFFER, ageB[1]);
-    glBufferData(GL_ARRAY_BUFFER, nParticles * sizeof(float), 0, GL_DYNAMIC_COPY);
+    glBufferData(GL_ARRAY_BUFFER, numParticles * sizeof(float), 0, GL_DYNAMIC_COPY);
 
     // fill the first age buffer
     std::vector<GLfloat> tempData(numParticles);
@@ -376,12 +377,12 @@ void Scene_Project::update(float t)
 
         if (glfwGetKey(&window, GLFW_KEY_W))
         {
-            zoomFOV = zoomFOV - rotationSpeed;
+            zoomFOV = zoomFOV - zoomSpeed;
         }
 
         if (glfwGetKey(&window, GLFW_KEY_S))
         {
-            zoomFOV = zoomFOV + rotationSpeed;
+            zoomFOV = zoomFOV + zoomSpeed;
         }
     }
 }
@@ -602,6 +603,7 @@ void Scene_Project::render()
     ImGui::Begin("Console", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::Checkbox("Toggle Rotation", &toggleRotation); ImGui::SameLine();
     ImGui::SliderFloat("Rotation Speed", &rotationSpeed, -0.05f, 0.05f);
+    ImGui::SliderFloat("Zoom Speed", &zoomSpeed, 0.01f, 0.1f);
 
     if (!toggleRotation)
     {

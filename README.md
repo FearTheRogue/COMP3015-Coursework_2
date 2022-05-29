@@ -2,7 +2,7 @@
 
 ---
 
-Image
+https://user-images.githubusercontent.com/43548013/170889613-7702ac6a-2dd8-4a93-aee2-4c6a25007391.mp4
 
 ---
 
@@ -21,7 +21,7 @@ Operating System:
 
 Double click on the executable (.exe) application
 
-<img align = "centre" src= "https://raw.githubusercontent.com/FearTheRogue/COMP3015-Coursework_2/main/readme%20images/imgui_image.PNG" width = "400">
+<img align = "centre" src= "https://github.com/FearTheRogue/COMP3015-Coursework_2/blob/main/readme%20images/imgui_image.PNG?raw=true" width = "400">
 
 Upon launching, an ImGui interface can be used to change certain values in the scene.
 
@@ -59,14 +59,56 @@ After toggling an effect, a collapsable header will appear. Where the user can c
 
 ---
 
-How do you open and control the software you wrote (exe file)?
+## How does the program code work?
 
-How does the program code work? How do the classes and functions fit together and who
-does what?
+scene_project.cpp
+
+> In the constructor it loads the models used in the project, and assigns the default values for the shader properties.
+>
+> initScene()
+> 
+> * Assigns particle textures, and sets the uniforms for the different shaders.
+> 
+> initBuffers()
+> 
+> * Generate the particle buffers (position, velocity and age).
+> * Creates vertex arrays for each set of buffers.
+> * Sets up the feedback objects.
+> 
+> compile()
+> 
+>  * Loads in the different shader files.
+>  
+>  setupNormalShader()
+>  
+>  * Handles the main scene lighting.
+>  
+>  setupWireframeShader()
+>  
+>  * Handles setting the wireframe uniforms.
+>  
+>  setupSilhouetteShader()
+>  
+>  * Handles setting the silhouette uniforms.
+>  
+>  render()
+>  
+>  * Handles the ImGui imputs from the user.
+>  * Changes the model translation.
+>  * Renders the models depending on their applied effect shaders.
+>  * Draws the particles.
+
+
 
 What makes your shader program special and how does it compare to similar things?
 (Where did you get the idea from? What did you start with? How did you make yours
 unique? Did you start with a given shader/project?)
+
+The original idea for this project came from the first project I developed in OpenGL, [here](https://github.com/FearTheRogue/COMP3015-Initial_Prototype). I wanted to further develop a "park" theme scene, and therefore the first implementation was the fountain model and particle system.
+
+## External Resources
+
+The project using the [ImGui library](https://github.com/ocornut/imgui) to render the UI.
 
 ## YouTube Video:
 

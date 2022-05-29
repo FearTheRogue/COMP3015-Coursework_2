@@ -71,7 +71,8 @@ public:
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init("#version 460");
-        ImGui::StyleColorsDark();
+        //ImGui::StyleColorsDark();
+        ImGui::StyleColorsClassic();
 
 #ifndef __APPLE__
 		if (debug) {

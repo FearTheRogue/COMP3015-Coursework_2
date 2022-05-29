@@ -45,7 +45,7 @@ Scene_Project::Scene_Project(GLFWwindow& window) : window(window), angle(0.0f), 
     // Fire Simulation assignment
     beginFireSimulation = false;
     fireLifetime = 1.5f;
-    fSize = 0.08f;
+    fSize = 0.3f;
     fireParticles = 4000;
 
     // Water Simulation assignment
@@ -155,8 +155,8 @@ void Scene_Project::initScene()
     silProg.setUniform("Light.Intensity", vec3(1.0f, 1.0f, 1.0f));
 
     waterProg.use();
-    waterProg.setUniform("Material.Kd", 0.4f, 0.4f, 0.4f);
-    waterProg.setUniform("Material.Ks", 0.9f, 0.9f, 0.9f);
+    waterProg.setUniform("Material.Kd", 0.2f, 0.5f, 0.6f);
+    waterProg.setUniform("Material.Ks", 0.2f, 0.5f, 0.9f);
     waterProg.setUniform("Material.Ka", 0.5f, 0.5f, 0.5f);
     waterProg.setUniform("Material.Shininess", 180.0f);
 }
@@ -599,10 +599,9 @@ void Scene_Project::render()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Begin("Console");
-
-    ImGui::TableNextColumn(); ImGui::Checkbox("Toggle Rotation", &toggleRotation); ImGui::SameLine();
-    ImGui::TableNextColumn(); ImGui::SliderFloat("Rotation Speed", &rotationSpeed, 0.001f, 0.1f);
+    ImGui::Begin("Console", NULL, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Checkbox("Toggle Rotation", &toggleRotation); ImGui::SameLine();
+    ImGui::SliderFloat("Rotation Speed", &rotationSpeed, -0.05f, 0.05f);
 
     if (!toggleRotation)
     {

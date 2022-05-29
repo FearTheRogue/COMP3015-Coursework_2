@@ -1,0 +1,31 @@
+﻿  glad.c
+  glslprogram.cpp
+  glutils.cpp
+  grid.cpp
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\helper\grid.cpp(9,26): warning C4101: 'z': unreferenced local variable
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\helper\grid.cpp(9,13): warning C4101: 'x': unreferenced local variable
+  objmesh.cpp
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\helper\objmesh.cpp(188,43): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\helper\objmesh.cpp(194,50): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\helper\objmesh.cpp(198,45): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+  plane.cpp
+  stb_image.cpp
+  texture.cpp
+  trianglemesh.cpp
+  imgui.cpp
+  imgui_draw.cpp
+  imgui_impl_glfw.cpp
+  imgui_impl_opengl3.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  main.cpp
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\helper\scenerunner.h(9,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\helper\scenerunner.h(10,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\helper\scenerunner.h(11,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  scenebasic_uniform.cpp
+  scene_project.cpp
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\scene_project.cpp(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\scene_project.cpp(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\scene_project.cpp(5,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Generating Code...
+  Project_Template.vcxproj -> C:\Users\James Bridgman\Documents\GitHub\COMP3015-Coursework_2\x64\Debug\DeveloperTool.exe

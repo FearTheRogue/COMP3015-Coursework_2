@@ -3,8 +3,8 @@
 #include <GLFW/glfw3.h>
 #include "glutils.h"
 
-#define WIN_WIDTH 800
-#define WIN_HEIGHT 600
+#define WIN_WIDTH 1280
+#define WIN_HEIGHT 720
 
 #include "imgui.h";
 #include "imgui_impl_glfw.h";
@@ -120,6 +120,8 @@ public:
 
         return recipeName;
     }
+
+    GLFWwindow& getWindow() { return *window; }
 
 private:
     static void printHelpInfo(const char * exeFile,  std::map<std::string, std::string> & sceneData) {

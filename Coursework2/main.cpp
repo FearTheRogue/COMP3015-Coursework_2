@@ -9,23 +9,7 @@ int main(int argc, char* argv[])
 
 	std::unique_ptr<Scene> scene;
 
-	scene = std::unique_ptr<Scene>(new Scene_Project());
-
-	
-
-
-
-	
-	//ImGui::Begin("Test");
-	//ImGui::Text("This is a text Window");
-	//ImGui::End();
-
-	//ImGui::Render();
-	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	//ImGui_ImplOpenGL3_Shutdown();
-	//ImGui_ImplGlfw_Shutdown();
-	//ImGui::DestroyContext();	
+	scene = std::unique_ptr<Scene>(new Scene_Project(runner.getWindow()));
 	
 	return runner.run(*scene);	
 }

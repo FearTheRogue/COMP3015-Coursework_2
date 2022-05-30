@@ -98,13 +98,9 @@ scene_project.cpp
 >  * Renders the models depending on their applied effect shaders.
 >  * Draws the particles.
 
+The original idea for this project came from the first project I developed in OpenGL, [here](https://github.com/FearTheRogue/COMP3015-Initial_Prototype). I wanted to further develop a "park" theme scene, and therefore the first implementation was the fountain model and particle system. 
 
-
-What makes your shader program special and how does it compare to similar things?
-(Where did you get the idea from? What did you start with? How did you make yours
-unique? Did you start with a given shader/project?)
-
-The original idea for this project came from the first project I developed in OpenGL, [here](https://github.com/FearTheRogue/COMP3015-Initial_Prototype). I wanted to further develop a "park" theme scene, and therefore the first implementation was the fountain model and particle system.
+What make's the project unique is the user is able to apply diffent effects to each model and edit the effects independently from one another.
 
 ## External Resources
 
@@ -113,15 +109,7 @@ The project using the [ImGui library](https://github.com/ocornut/imgui) to rende
 ## YouTube Video:
 
 ---
-
-video thumbnail
-
+  
+[<img align = "centre" src= "https://user-images.githubusercontent.com/43548013/170999519-18102a4e-842c-489e-b317-c3636806eda3.png" width="600">](https://youtu.be/0MFDImWbGCY)
+  
 ---
-
-Include a link to a video report that details the above but also goes into more detail on:
-
-o Anything else which will help us understand how your shader works.
-
-o Are there any software engineering issues, such as the trade-off between performance and good practice?
-
-o A (brief) evaluation of what you think you have achieved, and what (if anything) you would do differently, knowing what you now know. Don’t be modest but be realistic!

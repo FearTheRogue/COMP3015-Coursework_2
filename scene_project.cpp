@@ -85,12 +85,15 @@ Scene_Project::Scene_Project(GLFWwindow& window) : window(window), angle(0.0f), 
     fountainNormal = ObjMesh::load("media/fountain.obj", false);
     fountainAdjacency = ObjMesh::loadWithAdjacency("media/fountain.obj", false);
 
+    // Loads fireplace models
     firePlaceNormal = ObjMesh::load("media/fireplace.obj", false);
     firePlaceAdjacency = ObjMesh::loadWithAdjacency("media/fireplace.obj", false);
 
+    // Loads pond models
     pondbrinksNormal = ObjMesh::load("media/pondbricks.obj", false);
     pondbricksAdjacency = ObjMesh::loadWithAdjacency("media/pondbricks.obj", false);
 
+    // Loads water model
     water = ObjMesh::load("media/water.obj", false);
 }
 

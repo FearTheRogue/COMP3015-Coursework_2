@@ -43,7 +43,7 @@ void main()
 	float hb = abs(c*sin(alpha));
 	float hc = abs(b*sin(alpha));
 
-	// pass the distnace and position of the new vertex to the fragment
+	// pass the distance and position of the new vertex to the fragment
 	// also pass the normal, position of the mesh
 	GEdgeDistance = vec3(ha,0,0);
 	GNormal = VNormal[0];

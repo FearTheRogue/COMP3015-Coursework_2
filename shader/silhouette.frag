@@ -26,7 +26,7 @@ struct MaterialInfo {
 uniform MaterialInfo Material;
 
 // toon shading levels
-uniform const int levels = 100;
+uniform int levels;
 const float scaleFactor = 1.0 / levels;
 
 vec3 toonShade () 
